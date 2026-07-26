@@ -22,8 +22,6 @@ https://github.com/UB-Mannheim/tesseract/releases/tag/v5.4.0.20240606
 
 Во время установки оставьте путь по умолчанию:
 
-`C:\Program Files\Tesseract-OCR\`
-
 ## 3. Установить программу
 
 Запустите двойным щелчком **install.bat** Затем запустите **run.bat**
