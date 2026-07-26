@@ -21,6 +21,7 @@ Open-source Python-бот для автоматического прохожде
 https://github.com/UB-Mannheim/tesseract/releases/tag/v5.4.0.20240606
 
 Во время установки оставьте путь по умолчанию:
+`C:\Program Files\` !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ## 3. Установить программу
 
