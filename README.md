@@ -112,12 +112,6 @@ Word Capture Bot — полностью открытый проект на Pytho
 
 ---
 
-# ⚠️ Отказ от ответственности
-
-Проект создан исключительно в образовательных целях и как пример автоматизации работы с OCR и вводом с клавиатуры. Использование подобных инструментов может противоречить пользовательскому соглашению конкретной игры или платформы. Автор не несёт ответственности за последствия использования программы.
-
----
-
 # 🔍 GitHub Topics / Keywords
 
 Dota 2, Dota2, Атака Автоматонов, Attack Automatons, typing game, OCR, Tesseract OCR, Python, automation, auto typer, auto typing, keyboard automation, screen capture, computer vision, OpenCV, image recognition, game bot, typing bot, word bot, desktop automation, Windows, open source, hero names, item names, mini game, OCR bot, OCR automation, text recognition, keyboard input, gaming tools, Python OCR, Tesseract Python, desktop bot, capture bot, auto keyboard, typing automation.
