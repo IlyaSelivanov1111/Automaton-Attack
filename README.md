@@ -45,6 +45,7 @@ https://github.com/UB-Mannheim/tesseract/releases/tag/v5.4.0.20240606
 2. Выделите область экрана, где появляются слова.
 3. Нажмите **«Старт»** (`F8`).
 4. После окончания мини-игры нажмите **«Стоп»** (`F9`).
+<img width="519" height="593" alt="Screenshot_2" src="https://github.com/user-attachments/assets/2cbb430f-e2d2-46c8-a1f3-69494fb19063" />
 
 ---
 
