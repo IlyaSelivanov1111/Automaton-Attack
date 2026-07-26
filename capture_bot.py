@@ -8,6 +8,7 @@ import json
 import os
 import re
 import difflib
+import ctypes
 
 import mss
 import numpy as np
@@ -17,7 +18,73 @@ import keyboard
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="mss")
 
+_user32 = ctypes.WinDLL("user32", use_last_error=True)
+
+_INPUT_KEYBOARD = 1
+_KEYEVENTF_UNICODE = 0x0004
+_KEYEVENTF_KEYUP = 0x0002
+_PUL = ctypes.POINTER(ctypes.c_ulong)
+
+
+class _KEYBDINPUT(ctypes.Structure):
+    _fields_ = (
+        ("wVk", ctypes.c_ushort),
+        ("wScan", ctypes.c_ushort),
+        ("dwFlags", ctypes.c_ulong),
+        ("time", ctypes.c_ulong),
+        ("dwExtraInfo", _PUL),
+    )
+
+
+class _MOUSEINPUT(ctypes.Structure):
+    _fields_ = (
+        ("dx", ctypes.c_long),
+        ("dy", ctypes.c_long),
+        ("mouseData", ctypes.c_ulong),
+        ("dwFlags", ctypes.c_ulong),
+        ("time", ctypes.c_ulong),
+        ("dwExtraInfo", _PUL),
+    )
+
+
+class _HARDWAREINPUT(ctypes.Structure):
+    _fields_ = (
+        ("uMsg", ctypes.c_ulong),
+        ("wParamL", ctypes.c_short),
+        ("wParamH", ctypes.c_ushort),
+    )
+
+
+class _INPUT_UNION(ctypes.Union):
+    _fields_ = (
+        ("ki", _KEYBDINPUT),
+        ("mi", _MOUSEINPUT),
+        ("hi", _HARDWAREINPUT),
+    )
+
+
+class _INPUT(ctypes.Structure):
+    _fields_ = (("type", ctypes.c_ulong), ("union", _INPUT_UNION))
+
+
+def _send_unicode_key(ch, key_up):
+    extra = ctypes.c_ulong(0)
+    flags = _KEYEVENTF_UNICODE | (_KEYEVENTF_KEYUP if key_up else 0)
+    ki = _KEYBDINPUT(0, ord(ch), flags, 0, ctypes.pointer(extra))
+    inp = _INPUT(_INPUT_KEYBOARD, _INPUT_UNION(ki=ki))
+    sent = _user32.SendInput(1, ctypes.pointer(inp), ctypes.sizeof(inp))
+    return sent == 1
+
+
+def type_text_fast(text):
+    for ch in text:
+        down_ok = _send_unicode_key(ch, False)
+        up_ok = _send_unicode_key(ch, True)
+        if not (down_ok and up_ok):
+            keyboard.write(ch)
+
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 
 OCR_CONFIG = "--oem 1 --psm 11"
 
@@ -454,7 +521,9 @@ class CaptureBot:
 
                 to_type = final_text if offset == 0 else final_letters_only[offset:]
 
-                keyboard.write(to_type)
+                t_type0 = time.time()
+                type_text_fast(to_type)
+                type_ms = (time.time() - t_type0) * 1000
                 self.typed_recent[final_text] = now
 
                 if should_learn and final_text not in SEED_TERMS:
@@ -463,7 +532,7 @@ class CaptureBot:
 
                 extra = "" if offset == 0 else f" | остаток с буквы {offset + 1}"
                 self._log(
-                    f"'{to_type}' (фраза: '{final_text}') | {status} | conf {ph['conf']:.0f}%{extra}",
+                    f"'{to_type}' (фраза: '{final_text}') | {status} | conf {ph['conf']:.0f}% | ввод {type_ms:.0f} мс{extra}",
                     tag="input",
                 )
 
